@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- These components will be dynamically created
+and added to the ScrollView -->
+
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/stockQuoteRow"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+    <EditText
+        android:id="@+id/editTextCashInName"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.7"
+        android:hint="@string/hintCashInName"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/editTextCashInValue"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:ems="10"
+        android:gravity="center_vertical|right"
+        android:hint="@string/hintCashInValue"
+        android:inputType="numberDecimal"
+        android:width="100dp" >
+
+    </EditText>
+
+
+
+</TableRow>

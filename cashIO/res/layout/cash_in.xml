@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	    
+	<TableLayout
+	    android:id="@+id/tableLayoutCashIn"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_gravity="right"
+	    android:paddingBottom="50dp" 
+	    android:background="#000000">
+	
+	    <TableRow
+	        android:id="@+id/tableRow1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="right">
+	
+	        <Button
+	            android:id="@+id/btnAddCashIn"
+	            android:layout_width="0px"
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content"
+	            android:minHeight="36dip"
+	            android:background="@drawable/round_button"
+	            android:text="@string/btnAddCashIn" />
+	
+	    </TableRow>
+	    
+	    <ScrollView
+	        android:id="@+id/cashInScrollView"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="5dp"
+	        android:paddingBottom="50dp" >
+	        
+		        <TableLayout
+		        	android:id="@+id/cashInTableScrollView"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:padding="5dp"
+		            android:stretchColumns="yes" >
+		        </TableLayout>
+	        </ScrollView>
+		
+	</TableLayout>
+	
+	<RelativeLayout 
+        android:id="@+id/InnerRelativeLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/total_row"
+        android:padding="10dp" >
+			
+	    <LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="fill_parent" android:weightSum="1.0" android:layout_alignParentRight="true">
+
+	        <LinearLayout
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.7"
+	            android:gravity="right" >
+
+	        	<TextView
+	        	    android:id="@+id/cashInTotalLabel"
+	        	    android:layout_width="wrap_content"
+	        	    android:layout_height="wrap_content"
+	        	    android:text="@string/cashInTotal"
+	        	    android:textSize="18sp" />
+
+	        </LinearLayout>
+	        
+	        <LinearLayout
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.3"
+	            android:gravity="right"
+	            android:orientation="horizontal" >
+
+	        	<TextView
+	        	    android:id="@+id/cashInTotalValue"
+	        	    android:layout_width="wrap_content"
+	        	    android:layout_height="wrap_content"
+	        	    android:paddingRight="15dp"
+	        	    android:text="0.00"
+	        	    android:textSize="18sp" />
+
+	        </LinearLayout>
+	    </LinearLayout>
+	        
+
+	        
+	
+	    </RelativeLayout>
+</RelativeLayout>

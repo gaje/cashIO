@@ -20,11 +20,11 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         case 0:
             return new CashInFragment();
         case 1:
-            return new CashOutFragment();
+            return new CashInFragment();
         case 2:
             return new DashboardFragment();
-        }
- 
+	    }
+	 
         return null;
     }
  

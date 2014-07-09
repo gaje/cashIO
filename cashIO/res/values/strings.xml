@@ -2,15 +2,15 @@
 <resources>
 
     <string name="app_name">Save My Money!</string>
-    <string name="title_section1">Money Earned</string>
-    <string name="title_section2">Money Spent</string>
-    <string name="title_section3">Dashboard</string>
-    <string name="action_settings">Settings</string>
+    <string name="tab1">$ IN</string>
+    <string name="tab2">$ Out</string>
+    <string name="tab3">CC</string>
+    <string name="tab4">Dashboard</string>
 
     
     <string name="btnAddCashIn">Add Income</string>
     <string name="hintCashInName">Income Name</string>
-    <string name="hintCashInValue">0.00</string>
+    <string name="hintCashInValue">$0.00</string>
     
     <string name="cashInTotal">Total:</string>
     

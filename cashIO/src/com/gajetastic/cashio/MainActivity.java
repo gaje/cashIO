@@ -1,6 +1,8 @@
 package com.gajetastic.cashio;
 
 import com.gajetastic.cashio.adapter.TabsPagerAdapter;
+import com.gajetastic.cashio.database.SQLController;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentTransaction;
@@ -25,14 +27,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
-    private String[] tabs = { "$ In", "$ Out", "Dashboard" };
+    private String[] tabs;
     private TabsPagerAdapter mAdapter;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+       
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -55,6 +57,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         });
 
         // For each of the sections in the app, add a tab to the action bar.
+        tabs = getResources().getStringArray(R.array.tabs_array);
         for (String tab_name : tabs){
             actionBar.addTab(
                     actionBar.newTab()

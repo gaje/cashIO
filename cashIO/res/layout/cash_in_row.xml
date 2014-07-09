@@ -14,8 +14,9 @@ and added to the ScrollView -->
         android:layout_width="0px"
         android:layout_height="wrap_content"
         android:layout_weight="0.7"
+        android:ems="10"
         android:hint="@string/hintCashInName"
-        android:ems="10" >
+        android:textColor="#ffffff" >
 
         <requestFocus />
     </EditText>
@@ -29,6 +30,7 @@ and added to the ScrollView -->
         android:gravity="center_vertical|right"
         android:hint="@string/hintCashInValue"
         android:inputType="numberDecimal"
+        android:textColor="#ffffff"
         android:width="100dp" >
 
     </EditText>

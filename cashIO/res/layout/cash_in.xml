@@ -23,7 +23,7 @@
 	            android:layout_weight="1"
 	            android:layout_height="wrap_content"
 	            android:minHeight="36dip"
-	            android:background="@drawable/round_button"
+	            android:background="@drawable/main_button"
 	            android:text="@string/btnAddCashIn" />
 	
 	    </TableRow>

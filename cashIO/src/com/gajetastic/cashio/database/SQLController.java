@@ -33,7 +33,7 @@ public class SQLController {
 		cv.put(DatabaseHelper.TYPE, type);
 		cv.put(DatabaseHelper.AMOUNT, amount);
 		database.insert(DatabaseHelper.TABLE_MAIN, null, cv);
-
+		System.out.println("Finished executing insert!");
 	}
 
 	public Cursor readEntry() {
@@ -49,6 +49,17 @@ public class SQLController {
 		}
 		return c;
 
+	}
+	
+	public float getTotalSumByType(String type){
+		float amount;
+		Cursor c = database.rawQuery("SELECT sum(amount) FROM main WHERE type = '"+ type +"' ;", null);
+		if(c.moveToFirst())
+		    amount = c.getFloat(0);
+		else
+		    amount = 0;
+		return amount;
+		
 	}
 
 }

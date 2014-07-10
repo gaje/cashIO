@@ -7,11 +7,10 @@ import com.gajetastic.cashio.R;
 import com.gajetastic.cashio.database.SQLController;
 
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,10 +35,10 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 public class CashInFragment extends Fragment {
-	private View rootView;
-	private NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
-	private EditText incomeValue;
-	private EditText totalValueBox;
+	View rootView;
+	NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
+	EditText incomeValue;
+	EditText totalValueBox;
 	SQLController sqlcon;
 	TableLayout table_layout;
 	EditText name_et, amount_et;
@@ -49,16 +48,17 @@ public class CashInFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		sqlcon = new SQLController(getActivity());
+		
 		rootView = inflater.inflate(R.layout.cash_in, container, false);
-		table_layout = (TableLayout) rootView
-				.findViewById(R.id.cashInTableScrollView);
-		BuildTable();
-
+		table_layout = (TableLayout) rootView.findViewById(R.id.cashInTableScrollView);
+		
 		Button btnAddCashIn = (Button) rootView.findViewById(R.id.btnAddCashIn);
 		btnAddCashIn.setOnClickListener(addCashInBtnListener);
 		totalValueBox = (EditText) rootView.findViewById(R.id.cashInTotalValue);
-		totalValueBox.addTextChangedListener(new CurrencyTextWatcher(
-				this.totalValueBox));
+		totalValueBox.addTextChangedListener(new CurrencyTextWatcher(this.totalValueBox));
+		
+		BuildTable();
+		
 		return rootView;
 	}
 
@@ -186,7 +186,7 @@ public class CashInFragment extends Fragment {
 		Cursor c = sqlcon.readEntry();
 
 		int rows = c.getCount();
-		int cols = 2;
+		int cols = c.getColumnCount();
 
 		c.moveToFirst();
 
@@ -194,33 +194,51 @@ public class CashInFragment extends Fragment {
 		for (int i = 0; i < rows; i++) {
 
 			TableRow row = new TableRow(getActivity());
-			row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-					LayoutParams.WRAP_CONTENT));
+			row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.WRAP_CONTENT,1.0f));
 
 			// inner for loop
 			for (int j = 0; j < cols; j++) {
-
-				TextView tv = new TextView(getActivity());
-				tv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-						LayoutParams.WRAP_CONTENT));
-				tv.setGravity(Gravity.CENTER);
-				tv.setTextSize(18);
-				tv.setPadding(0, 5, 0, 5);
-
-				tv.setText(c.getString(j));
-
-				row.addView(tv);
+					
+				if(j==0){
+					Button button = new Button(getActivity());
+					button.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT));
+					button.setBackgroundResource(R.drawable.round_button);
+					button.setTextColor(Color.parseColor("#FFFFFF"));
+					button.setText("Delete");
+					row.addView(button);
+				} else if(j!=2){
+					TextView tv = new TextView(getActivity());
+					tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT));
+					if(j==1){
+						tv.setGravity(Gravity.LEFT);
+						tv.setPadding(30,5,10,5);
+					} else {
+						tv.setGravity(Gravity.RIGHT);
+						tv.setPadding(10,5,10,5);
+					}
+					tv.setTextSize(18);
+					tv.setTextColor(Color.parseColor("#FFFFFF"));
+					if(j==3){
+						tv.addTextChangedListener(new CurrencyTextWatcher((EditText) tv));;
+					}
+					tv.setText(c.getString(j));
+	
+					row.addView(tv);
+				}
 
 			}
 
 			c.moveToNext();
 
-			table_layout.addView(row);
-
+			table_layout.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
 		}
+		Float f = sqlcon.getTotalSumByType("income");
+		
+		totalValueBox.setText(f.toString());
 		sqlcon.close();
 	}
-
+	
+	
 	private class MyAsync extends AsyncTask<Void, Void, Void> {
 
 		@Override
@@ -235,17 +253,6 @@ public class CashInFragment extends Fragment {
 			PD.setMessage("Loading...");
 			PD.setCancelable(false);
 			PD.show();
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					try {
-						Thread.sleep(5000);
-					} catch (Exception e) {
-					}
-					PD.dismiss();
-				}
-			}).start();
 		}
 
 		@Override
@@ -270,6 +277,13 @@ public class CashInFragment extends Fragment {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			BuildTable();
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			PD.dismiss();
 		}
 	}

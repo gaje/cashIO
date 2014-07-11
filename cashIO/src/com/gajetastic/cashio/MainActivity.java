@@ -29,6 +29,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     ViewPager mViewPager;
     private String[] tabs;
     private TabsPagerAdapter mAdapter;
+    static int curPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setText(tab_name)
                             .setTabListener(this));
         }
+        actionBar.hide();
         
     }
 
@@ -88,9 +90,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
+        // When the given tab is selected, switch to the corresponding page in the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
+        
     }
 
     @Override

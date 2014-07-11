@@ -36,12 +36,12 @@ public class SQLController {
 		System.out.println("Finished executing insert!");
 	}
 
-	public Cursor readEntry() {
+	public Cursor readEntry(String type) {
 
 		String[] allColumns = new String[] { DatabaseHelper.KEY_ID,
 				DatabaseHelper.NAME, DatabaseHelper.TYPE, DatabaseHelper.AMOUNT };
-
-		Cursor c = database.query(DatabaseHelper.TABLE_MAIN, allColumns, null,
+		String whereClause = DatabaseHelper.TYPE + "='"+type+"'";
+		Cursor c = database.query(DatabaseHelper.TABLE_MAIN, allColumns, whereClause,
 				null, null, null, null);
 
 		if (c != null) {
@@ -60,6 +60,31 @@ public class SQLController {
 		    amount = 0;
 		return amount;
 		
+	}
+	
+	public boolean deleteRow(int i){
+		String table = DatabaseHelper.TABLE_MAIN;
+		String whereClause = DatabaseHelper.KEY_ID + "=" + i;
+		return database.delete(table, whereClause, null) > 0;
+	}
+	
+	public float getTotalSaved(){
+		float amountIn, amountOut;
+		Cursor cIncome = database.rawQuery("SELECT sum(amount) FROM main WHERE type = 'income';", null);
+		Cursor cBills = database.rawQuery("SELECT sum(amount) FROM main WHERE type = 'bill';", null);
+		if(cIncome.moveToFirst()){
+		    amountIn = cIncome.getFloat(0);
+		} else {
+			amountIn = 0;
+		}
+		
+		if(cBills.moveToFirst()){
+		    amountOut = cBills.getFloat(0);
+		} else {
+			amountOut = 0;
+		}
+		
+		return amountIn-amountOut;
 	}
 
 }

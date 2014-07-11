@@ -7,11 +7,20 @@
     <string name="tab3">CC</string>
     <string name="tab4">Dashboard</string>
 
+    <string name="incomePageTitle">Your Monthly Income</string>
+    <string name="billsPageTitle">Your Bills</string>
     
     <string name="btnAddCashIn">Add Income</string>
+    <string name="btnAddBill">Add Bill</string>
+    
     <string name="hintCashInName">Income Name</string>
+    <string name="hintBillName">Bill Name</string>
     <string name="hintCashInValue">$0.00</string>
     
     <string name="cashInTotal">Total:</string>
+    
+    <string name="dashboard_h1">You\'re Saving </string>
+    
+    <string name="dashboard_h2"> Every Month!</string>
     
 </resources>

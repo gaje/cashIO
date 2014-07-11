@@ -1,7 +1,6 @@
 package com.gajetastic.cashio.adapter;
 
 import com.gajetastic.cashio.CashInFragment;
-import com.gajetastic.cashio.CashOutFragment;
 import com.gajetastic.cashio.DashboardFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,11 +17,11 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
  
         switch (index) {
         case 0:
-            return new CashInFragment();
+        	return new DashboardFragment();
         case 1:
-            return new CashInFragment();
+            return new CashInFragment(index);
         case 2:
-            return new DashboardFragment();
+        	return new CashInFragment(index);
 	    }
 	 
         return null;

@@ -4,10 +4,11 @@
 and added to the ScrollView -->
 
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/stockQuoteRow"
+    android:id="@+id/dynamicTableRow"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    android:paddingTop="50dp">
 
     <EditText
         android:id="@+id/editTextCashInName"
@@ -15,8 +16,8 @@ and added to the ScrollView -->
         android:layout_height="wrap_content"
         android:layout_weight="0.7"
         android:ems="10"
-        android:hint="@string/hintCashInName"
-        android:textColor="#ffffff" >
+        android:inputType="text"
+        android:textColor="#006699" >
 
         <requestFocus />
     </EditText>
@@ -30,7 +31,7 @@ and added to the ScrollView -->
         android:gravity="center_vertical|right"
         android:hint="@string/hintCashInValue"
         android:inputType="numberDecimal"
-        android:textColor="#ffffff"
+        android:textColor="#006699"
         android:width="100dp" >
 
     </EditText>

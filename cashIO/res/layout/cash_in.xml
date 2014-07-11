@@ -8,14 +8,33 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:layout_gravity="right"
-	    android:paddingBottom="50dp" 
-	    android:background="#000000">
+	    android:paddingBottom="45dp" 
+	    android:background="#d9d9d9">
 	
+	    
+	    <TableRow
+	        android:id="@+id/tableRowTitle"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/title_row"
+	        android:gravity="center_horizontal"
+	        android:padding="10dp">
+
+	        <TextView
+	            android:id="@+id/tvPageTitle"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textStyle="bold"
+	            android:textSize="26sp" >
+
+	        </TextView>
+	
+	    </TableRow>
+	    
 	    <TableRow
 	        android:id="@+id/tableRow1"
 	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:gravity="right">
+	        android:layout_height="wrap_content">
 	
 	        <Button
 	            android:id="@+id/btnAddCashIn"
@@ -23,24 +42,23 @@
 	            android:layout_weight="1"
 	            android:layout_height="wrap_content"
 	            android:minHeight="36dip"
-	            android:background="@drawable/main_button"
-	            android:text="@string/btnAddCashIn" />
+	            android:textStyle="bold"
+	            android:textColor="#ffffff"
+	            android:background="@drawable/main_button" />
 	
 	    </TableRow>
 	    
 	    <ScrollView
 	        android:id="@+id/cashInScrollView"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:padding="5dp"
-	        android:paddingBottom="50dp" >
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:fillViewport = "true" >
 	        
 		        <TableLayout
+		            android:animateLayoutChanges="true"
 		        	android:id="@+id/cashInTableScrollView"
 		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            android:padding="5dp"
-		            android:stretchColumns="yes" >
+		            android:layout_height="wrap_content" >
 		        </TableLayout>
 	        </ScrollView>
 		
@@ -52,7 +70,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/total_row"
-        android:padding="10dp" >
+        android:padding="10dp"
+        android:height="30dp" >
 			
 	    <LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="fill_parent" android:weightSum="1.0" android:layout_alignParentRight="true">
 
@@ -67,6 +86,7 @@
 	        	    android:layout_width="wrap_content"
 	        	    android:layout_height="wrap_content"
 	        	    android:text="@string/cashInTotal"
+	        	    android:textColor="#ffffff"
 	        	    android:textSize="18sp" />
 
 	        </LinearLayout>
@@ -90,7 +110,8 @@
 	                android:focusableInTouchMode="false"
 	                android:gravity="center_vertical|right"
 	                android:inputType="numberDecimal"
-	                android:text="$0.00" >
+	                android:text="$0.00"
+	                android:textColor="#ffffff" >
 
 	            </EditText>
 	        	

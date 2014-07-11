@@ -1,16 +1,18 @@
 package com.gajetastic.cashio;
 
 import java.text.NumberFormat;
-import java.util.Locale;
 
 import com.gajetastic.cashio.R;
 import com.gajetastic.cashio.database.SQLController;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,13 +24,14 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -36,49 +39,117 @@ import android.widget.TextView.OnEditorActionListener;
 
 public class CashInFragment extends Fragment {
 	View rootView;
-	NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
+	NumberFormat format = NumberFormat.getCurrencyInstance();
 	EditText incomeValue;
 	EditText totalValueBox;
 	SQLController sqlcon;
 	TableLayout table_layout;
 	EditText name_et, amount_et;
 	ProgressDialog PD;
+	int curPage;
+	String type;
+	int hint;
+
+	public CashInFragment(int curPage) {
+		this.curPage = curPage;
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		sqlcon = new SQLController(getActivity());
-		
+
 		rootView = inflater.inflate(R.layout.cash_in, container, false);
 		table_layout = (TableLayout) rootView.findViewById(R.id.cashInTableScrollView);
-		
+		TextView tv = (TextView) rootView.findViewById(R.id.tvPageTitle);
 		Button btnAddCashIn = (Button) rootView.findViewById(R.id.btnAddCashIn);
+		
+		if (curPage == 1) {
+			tv.setText(R.string.incomePageTitle);
+			type = "income";
+			hint = R.string.hintCashInName;
+			btnAddCashIn.setText(R.string.btnAddCashIn);
+		} else {
+			tv.setText(R.string.billsPageTitle);
+			type = "bill";
+			hint = R.string.hintBillName;
+			btnAddCashIn.setText(R.string.btnAddBill);
+		}
+		
 		btnAddCashIn.setOnClickListener(addCashInBtnListener);
 		totalValueBox = (EditText) rootView.findViewById(R.id.cashInTotalValue);
-		totalValueBox.addTextChangedListener(new CurrencyTextWatcher(this.totalValueBox));
-		
 		BuildTable();
-		
+
 		return rootView;
 	}
 
 	public void insertRow(View v) {
-		LayoutInflater inflator = (LayoutInflater) getActivity()
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflator = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View newStockRow = inflator.inflate(R.layout.cash_in_row, null);
-		incomeValue = (EditText) newStockRow
-				.findViewById(R.id.editTextCashInValue);
-		incomeValue.addTextChangedListener(new CurrencyTextWatcher(
-				this.incomeValue));
-		incomeValue.setOnFocusChangeListener(onValueInputChange);
+		EditText nameField = (EditText) newStockRow.findViewById(R.id.editTextCashInName);
+		nameField.setHint(hint);
+		incomeValue = (EditText) newStockRow.findViewById(R.id.editTextCashInValue);
+		incomeValue.addTextChangedListener(new CurrencyTextWatcher(this.incomeValue));
 		incomeValue.setOnEditorActionListener(onEditorActionListener);
 		table_layout.addView(newStockRow);
+	}
+	
+	public void hideInputRow(View v){
+		
+	}
+
+	public void deleteRow(final View v) {
+
+		new AlertDialog.Builder(getActivity())
+				.setMessage("Are you sure you want to delete this row?")
+				.setCancelable(false)
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								String row = v.getTag().toString();
+								sqlcon.open();
+								boolean isDeleted = sqlcon.deleteRow(Integer
+										.parseInt(row));
+								sqlcon.close();
+								if (isDeleted) {
+									table_layout.removeView((View) v.getParent().getParent());
+									table_layout.invalidate();
+									updateRowColors();
+									updateTotal();
+								}
+							}
+						}).setNegativeButton("No", null).show();
+	}
+
+	public void updateTotal() {
+		sqlcon.open();
+		Float f = sqlcon.getTotalSumByType(type);
+		totalValueBox.setText(format.format(f));
+		sqlcon.close();
+	}
+
+	public void updateRowColors() {
+		for (int i = 0; i < table_layout.getChildCount(); i++) {
+			TableRow row = (TableRow) table_layout.getChildAt(i);
+			row.setBackgroundColor(Color.parseColor("#d9d9d9"));
+			if (i % 2 == 0) {
+				row.setBackgroundColor(Color.parseColor("#cccccc"));
+			}
+		}
 	}
 
 	public View.OnClickListener addCashInBtnListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			insertRow(v);
+		}
+
+	};
+
+	public Button.OnClickListener deleteCashInBtnListener = new Button.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			deleteRow(v);
 		}
 
 	};
@@ -95,9 +166,10 @@ public class CashInFragment extends Fragment {
 
 				MyAsync task = new MyAsync();
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-					task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[])null);
+					task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+							(Void[]) null);
 				else
-					task.execute((Void[])null);
+					task.execute((Void[]) null);
 				InputMethodManager imm = (InputMethodManager) getActivity()
 						.getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(rootView.getWindowToken(), 0);
@@ -106,20 +178,6 @@ public class CashInFragment extends Fragment {
 		}
 	};
 
-	public OnFocusChangeListener onValueInputChange = new OnFocusChangeListener() {
-		@Override
-		public void onFocusChange(View v, boolean hasFocus) {
-
-			if (!hasFocus) {
-				// Float tempTotal =
-				// Float.parseFloat(totalValueBox.getText().toString().substring(1));
-				// TextView field = (TextView) v;
-				// Float rowValue =
-				// Float.parseFloat(field.getText().toString().substring(1));
-				// totalValueBox.setText(Float.toString(tempTotal + rowValue));
-			}
-		}
-	};
 
 	class CurrencyTextWatcher implements TextWatcher {
 
@@ -132,21 +190,7 @@ public class CashInFragment extends Fragment {
 		}
 
 		public synchronized void afterTextChanged(Editable s) {
-			if (!mEditing) {
-				mEditing = true;
 
-				String digits = s.toString().replaceAll("\\D", "");
-
-				try {
-					String formatted = nf
-							.format(Double.parseDouble(digits) / 100);
-					s.replace(0, s.length(), formatted);
-				} catch (NumberFormatException nfe) {
-					s.clear();
-				}
-
-				mEditing = false;
-			}
 		}
 
 		public void beforeTextChanged(CharSequence s, int start, int count,
@@ -183,62 +227,85 @@ public class CashInFragment extends Fragment {
 	private void BuildTable() {
 
 		sqlcon.open();
-		Cursor c = sqlcon.readEntry();
+		Cursor c = sqlcon.readEntry(type);
 
 		int rows = c.getCount();
-		int cols = c.getColumnCount();
-
 		c.moveToFirst();
 
-		// outer for loop
 		for (int i = 0; i < rows; i++) {
 
 			TableRow row = new TableRow(getActivity());
-			row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.WRAP_CONTENT,1.0f));
+			row.setLayoutParams(new TableRow.LayoutParams(
+					TableRow.LayoutParams.MATCH_PARENT,
+					TableRow.LayoutParams.WRAP_CONTENT));
+			row.setGravity(Gravity.CENTER_VERTICAL);
+			
+			FrameLayout fl = new FrameLayout(getActivity());
+			TableRow.LayoutParams params = new TableRow.LayoutParams(LayoutParams.WRAP_CONTENT, 100);
+			params.gravity=Gravity.CENTER_VERTICAL;
+			fl.setLayoutParams(params);
+			fl.setPadding(10, 30, 10, 20);
+			
+			Button button = new Button(getActivity());
+			button.setLayoutParams(new TableRow.LayoutParams(45, 45, 0));
+			button.setBackgroundResource(R.drawable.round_button);
+			button.setTextColor(Color.parseColor("#eeeeee"));
+			button.setText("\u2014");
+			button.setTextSize(16);
+			button.setGravity(Gravity.TOP);
+			button.setPadding(10, 0, 0, 0);
+			button.setTypeface(Typeface.DEFAULT_BOLD);
+			button.setOnClickListener(deleteCashInBtnListener);
+			button.setTag(Integer.valueOf(c.getString(0)));
+			fl.addView(button);
+			row.addView(fl);
 
-			// inner for loop
-			for (int j = 0; j < cols; j++) {
-					
-				if(j==0){
-					Button button = new Button(getActivity());
-					button.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT));
-					button.setBackgroundResource(R.drawable.round_button);
-					button.setTextColor(Color.parseColor("#FFFFFF"));
-					button.setText("Delete");
-					row.addView(button);
-				} else if(j!=2){
-					TextView tv = new TextView(getActivity());
-					tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT));
-					if(j==1){
-						tv.setGravity(Gravity.LEFT);
-						tv.setPadding(30,5,10,5);
-					} else {
-						tv.setGravity(Gravity.RIGHT);
-						tv.setPadding(10,5,10,5);
-					}
-					tv.setTextSize(18);
-					tv.setTextColor(Color.parseColor("#FFFFFF"));
-					if(j==3){
-						tv.addTextChangedListener(new CurrencyTextWatcher((EditText) tv));;
-					}
-					tv.setText(c.getString(j));
-	
-					row.addView(tv);
-				}
+			EditText etName = new EditText(getActivity());
+			EditText etValue = new EditText(getActivity());
 
-			}
+			etName.setLayoutParams(new TableRow.LayoutParams(
+					TableRow.LayoutParams.WRAP_CONTENT,
+					TableRow.LayoutParams.WRAP_CONTENT, 0.3f));
+			etName.setGravity(Gravity.LEFT);
+			etName.setPadding(10, 5, 10, 5);
+			etName.setTextSize(18);
+			etName.setMaxWidth(350);
+			etName.setBackgroundColor(Color.TRANSPARENT);
+			etName.setFocusable(false);
+			etName.setClickable(false);
+			etName.setTextColor(Color.parseColor("#333333"));
+			etName.setText(c.getString(1));
+			row.addView(etName);
+
+			etValue.setLayoutParams(new TableRow.LayoutParams(
+					TableRow.LayoutParams.WRAP_CONTENT,
+					TableRow.LayoutParams.WRAP_CONTENT, 0.4f));
+			etValue.setGravity(Gravity.RIGHT);
+			etValue.setPadding(10, 5, 15, 5);
+			etValue.setTextSize(18);
+			etValue.setBackgroundColor(Color.TRANSPARENT);
+			etValue.setFocusable(false);
+			etValue.setClickable(false);
+			etValue.setTextColor(Color.parseColor("#333333"));
+			etValue.setText(c.getString(1));
+			Float val = Float.parseFloat(c.getString(3));
+			etValue.setText(format.format(val));
+			row.addView(etValue);
 
 			c.moveToNext();
 
-			table_layout.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
+			table_layout.addView(row, new TableLayout.LayoutParams(
+					TableLayout.LayoutParams.MATCH_PARENT,
+					TableLayout.LayoutParams.WRAP_CONTENT));
 		}
-		Float f = sqlcon.getTotalSumByType("income");
-		
-		totalValueBox.setText(f.toString());
+
 		sqlcon.close();
+
+		updateRowColors();
+		updateTotal();
+
 	}
-	
-	
+
 	private class MyAsync extends AsyncTask<Void, Void, Void> {
 
 		@Override
@@ -259,15 +326,14 @@ public class CashInFragment extends Fragment {
 		protected Void doInBackground(Void... params) {
 
 			String name = name_et.getText().toString();
-			String type = "income";
 			Float amount = Float.parseFloat(amount_et.getText().toString()
 					.substring(1));
 			System.out.println(amount);
 			// inserting data
 			sqlcon.open();
-			try{
-			sqlcon.insertData(name, type, amount);
-			} catch(SQLException e){
+			try {
+				sqlcon.insertData(name, type, amount);
+			} catch (SQLException e) {
 				System.out.println("Error inserting data: " + e);
 			}
 			return null;
@@ -277,7 +343,7 @@ public class CashInFragment extends Fragment {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			BuildTable();
-			
+
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
